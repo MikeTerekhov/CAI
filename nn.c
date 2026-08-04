@@ -314,6 +314,10 @@ int main() {
    MAT_PRINT(b);
    MAT_PRINT(a1); // predictions, compare against y
 
+   printf("\ndecision boundary (x1 -->, x2 ^):\n");
+   print_decision_boundary(w, b, 21);
+
+
    mat_free(a1);
    mat_free(cost);
    mat_free(sig_deriv);
