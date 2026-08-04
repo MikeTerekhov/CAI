@@ -130,6 +130,17 @@ void mat_mult(mat dst, mat a, mat b)
    }
 }
 
+float mat_sum(mat m)
+{
+   float res = 0;
+   for (int i = 0 ; i < m.rows ; ++i) {
+      for (int j = 0 ; j < m.cols ; ++j) {
+         res += MAT_AT(m, i, j);
+      }
+   }
+   return res;
+}
+
 void sigmoid(mat m) {
    for (int i = 0 ; i < m.rows ; ++i) {
       for (int j = 0 ; j < m.cols ; ++j) {
