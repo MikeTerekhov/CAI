@@ -149,6 +149,14 @@ void sigmoid(mat m) {
    }
 }
 
+// single point prediction helper
+float predict(float x1, float x2, mat w, mat b)
+{
+   // z = x1 * w + x2 * w + b
+   float z = x1 * MAT_AT(w, 0, 0) + x2 * MAT_AT(w, 1, 0) + MAT_AT(b, 0, 0);
+   return 1 / (1 + exp(-z));
+}
+
 void mat_mult_scalar(mat m, float x)
 {
    for (int i = 0 ; i < m.rows ; ++i) {
