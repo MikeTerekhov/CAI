@@ -157,6 +157,19 @@ float predict(float x1, float x2, mat w, mat b)
    return 1 / (1 + exp(-z));
 }
 
+void print_decision_boundary(mat w, mat b, int resolution)
+{
+   for (int i = 0 ; i < resolution ; i++) {
+      float x2 = 1.0f - (float)i / (resolution - 1);
+      for (int j = 0 ; j < resolution ; j ++) {
+         float x1 = (float)j / (resolution - 1); 
+         float pred = predict(x1, x2, w, b);
+         putchar(pred > 0.5f ? '#' : '.');
+      }
+      putchar('\n');
+   }
+}
+
 void mat_mult_scalar(mat m, float x)
 {
    for (int i = 0 ; i < m.rows ; ++i) {
