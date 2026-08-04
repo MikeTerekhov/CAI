@@ -60,6 +60,18 @@ void mat_add(mat dst, mat src)
    }
 }
 
+void mat_add_broadcast(mat dst, mat scalar)
+{
+   // make sure scalar is a single val just in mat form
+   assert(scalar.rows == 1 && scalar.cols == 1);
+   for (int i = 0 ; i < dst.rows ; ++i) {
+      for (int j = 0 ; j < dst.cols ; ++j) {
+         MAT_AT(dst, i, j) += scalar.start[0];
+      }
+   }
+
+}
+
 void mat_diff(mat dst, mat src)
 {
    assert(dst.rows == src.rows);
