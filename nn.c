@@ -226,7 +226,7 @@ int main() {
    mat y = { .rows = 4, .cols = 1, .start = out };
    mat w = mat_alloc(2, 1);
    rand_init(w);
-   mat b = mat_alloc(4, 1);
+   mat b = mat_alloc(1, 1);
    rand_init(b);
 
    MAT_PRINT(x);
@@ -243,12 +243,12 @@ int main() {
    mat dcost = mat_alloc(4, 1);
    mat xt = transpose(x); // x doesn't change, so its transpose is computed once
    mat dcost_w = mat_alloc(2, 1);
-   mat dcost_b = mat_alloc(4, 1);
+   mat dcost_b = mat_alloc(1, 1);
 
    for (int epoch = 0 ; epoch < epochs ; ++epoch) {
       // forward
       mat_mult(a1, x, w); // a1 = xw
-      mat_add(a1, b); // a1 = xw + b
+      mat_add_broadcast(a1, b); // a1 = xw + b
       sigmoid(a1); // a1 = sig(a1)
 
       // cost
@@ -271,8 +271,8 @@ int main() {
 
       // d cost WITH RESPECT TO B : 1/n * 2 * (a1 - y) * sig'(z)
       // dz/db = 1 (b is added elementwise to z), so no x.T needed here
-      mat_copy(dcost_b, dcost); // dcost_b = (a1 - y) * a1 * (1 - a1)
-      mat_mult_scalar(dcost_b, 0.5); // * 1/n * 2
+
+      MAT_AT(dcost_b, 0, 0) = mat_sum(dcost) * 0.5;
 
       // update weights and bias
       mat_mult_scalar(dcost_w, learning_rate);
