@@ -238,9 +238,9 @@ int main() {
       };
    float out[] = {
       0,
-      0, 
-      0, 
-      1
+      1, 
+      1, 
+      0
       };
 
    mat x = { .rows = 4, .cols = 2, .start = in };
