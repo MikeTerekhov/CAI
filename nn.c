@@ -243,17 +243,29 @@ int main() {
       0
       };
 
+   // input and output
    mat x = { .rows = 4, .cols = 2, .start = in };
    mat y = { .rows = 4, .cols = 1, .start = out };
-   mat w = mat_alloc(2, 1);
-   rand_init(w);
-   mat b = mat_alloc(1, 1);
-   rand_init(b);
+
+   // weights
+   int H = 2;
+   mat w1 = mat_alloc(2, H); // input -> hidden
+   rand_init(w1);
+   mat b1 = mat_alloc(1, H); // one bias per unit
+   rand_init(b1);
+
+   mat w2 = mat__alloc(H, 1); // hiden -> output
+   rand_init(w2);
+   mat b2 = mat_alloc(1, 1); // single output bias
+   rand_init(b2);
 
    MAT_PRINT(x);
    MAT_PRINT(y);
-   MAT_PRINT(w);
-   MAT_PRINT(b);
+
+   MAT_PRINT(w1);
+   MAT_PRINT(b1);
+   MAT_PRINT(w2);
+   MAT_PRINT(b2);
 
    float learning_rate = 1e-3;
    int epochs = 100000;
