@@ -62,11 +62,12 @@ void mat_add(mat dst, mat src)
 
 void mat_add_broadcast(mat dst, mat scalar)
 {
-   // make sure scalar is a single val just in mat form
-   assert(scalar.rows == 1 && scalar.cols == 1);
+   // rows are batch examples and columns are features/units
+   // A bias always has one value per output unit, which needs to be added identically to every example in the batch
+   assert(scalar.rows == 1 && scalar.cols == dst.cols);
    for (int i = 0 ; i < dst.rows ; ++i) {
       for (int j = 0 ; j < dst.cols ; ++j) {
-         MAT_AT(dst, i, j) += scalar.start[0];
+         MAT_AT(dst, i, j) += MAT_AT(scalar, 0, j);
       }
    }
 
