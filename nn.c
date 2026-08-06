@@ -254,7 +254,7 @@ int main() {
    mat b1 = mat_alloc(1, H); // one bias per unit
    rand_init(b1);
 
-   mat w2 = mat__alloc(H, 1); // hiden -> output
+   mat w2 = mat_alloc(H, 1); // hiden -> output
    rand_init(w2);
    mat b2 = mat_alloc(1, 1); // single output bias
    rand_init(b2);
