@@ -142,6 +142,22 @@ float mat_sum(mat m)
    return res;
 }
 
+// dst is [1, src.cols]
+//dst = [..............]
+// sums across all the ROWS of SRC and puts it into dst row vec
+void mat_col_sum(mat dst, mat src)
+{
+   assert(dst.rows == 1);
+   assert(dst.cols == src.cols);
+   for (int j = 0 ; j < src.cols ; j++){
+      float sum = 0;
+      for (int i = 0 ; i < src.rows ; i++) {
+          sum += MAT_AT(src, i, j);
+      }
+      MAT_AT(dst, 0, j) = sum;
+   }
+}
+
 void sigmoid(mat m) {
    for (int i = 0 ; i < m.rows ; ++i) {
       for (int j = 0 ; j < m.cols ; ++j) {
@@ -214,7 +230,7 @@ void mat_transpose_into(mat dst, mat src)
    assert(dst.cols == src.rows);
    for (int i = 0 ; i < src.rows ; ++i) {
       for (int j = 0 ; j < src.cols ; ++j) {
-         MAT_AT(dst, j, i) = MAT_AT(src, i, j)
+         MAT_AT(dst, j, i) = MAT_AT(src, i, j);
       }
    }
 }
