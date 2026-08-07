@@ -208,6 +208,17 @@ mat transpose(mat m)
    return mt;
 }
 
+void mat_transpose_into(mat dst, mat src)
+{
+   assert(dst.rows == src.cols);
+   assert(dst.cols == src.rows);
+   for (int i = 0 ; i < src.rows ; ++i) {
+      for (int j = 0 ; j < src.cols ; ++j) {
+         MAT_AT(dst, j, i) = MAT_AT(src, i, j)
+      }
+   }
+}
+
 void mat_copy(mat dst, mat src)
 {
    assert(dst.rows == src.rows);
