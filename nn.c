@@ -174,18 +174,18 @@ float predict(float x1, float x2, mat w1, mat b1, mat w2, mat b2)
    {
       float z1 = x1 * MAT_AT(w1, 0, h) + x2 * MAT_AT(w1, 1, h) + MAT_AT(b1, 0, h);
       float a1 = 1 / (1 + exp(-z1)); // sigmoid of hidden unit
-      z2 += a1 * a1 * MAT_AT(w2, h, 0);
+      z2 += a1 * MAT_AT(w2, h, 0);
    }
    return 1 / (1 + exp(-z2)); // sigmoid of of output
 }
 
-void print_decision_boundary(mat w, mat b, int resolution)
+void print_decision_boundary(mat w1, mat b1, mat w2, mat b2, int resolution)
 {
    for (int i = 0 ; i < resolution ; i++) {
       float x2 = 1.0f - (float)i / (resolution - 1);
       for (int j = 0 ; j < resolution ; j ++) {
          float x1 = (float)j / (resolution - 1); 
-         float pred = predict(x1, x2, w, b);
+         float pred = predict(x1, x2, w1, b1, w2, b2);
          putchar(pred > 0.5f ? '#' : '.');
       }
       putchar('\n');
