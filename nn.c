@@ -167,11 +167,16 @@ void sigmoid(mat m) {
 }
 
 // single point prediction helper
-float predict(float x1, float x2, mat w, mat b)
+float predict(float x1, float x2, mat w1, mat b1, mat w2, mat b2)
 {
-   // z = x1 * w + x2 * w + b
-   float z = x1 * MAT_AT(w, 0, 0) + x2 * MAT_AT(w, 1, 0) + MAT_AT(b, 0, 0);
-   return 1 / (1 + exp(-z));
+   float z2 = MAT_AT(b2, 0, 0);
+   for (int h = 0 ; h < w1.cols ; h++)
+   {
+      float z1 = x1 * MAT_AT(w1, 0, h) + x2 * MAT_AT(w1, 1, h) + MAT_AT(b1, 0, h);
+      float a1 = 1 / (1 + exp(-z1)); // sigmoid of hidden unit
+      z2 += a1 * a1 * MAT_AT(w2, h, 0);
+   }
+   return 1 / (1 + exp(-z2)); // sigmoid of of output
 }
 
 void print_decision_boundary(mat w, mat b, int resolution)
