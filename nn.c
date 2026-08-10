@@ -298,19 +298,35 @@ int main() {
    float learning_rate = 1e-3;
    int epochs = 100000;
 
-   mat a1 = mat_alloc(4, 1);
+   //---------------------------------------------------
+   mat hidden = mat_alloc(4, H);       // hidden layer activations
+   mat pred = mat_alloc(4, 1);          // final output
+
    mat cost = mat_alloc(4, 1);
-   mat sig_deriv = mat_alloc(4, 1);
-   mat dcost = mat_alloc(4, 1);
-   mat xt = transpose(x); // x doesn't change, so its transpose is computed once
-   mat dcost_w = mat_alloc(2, 1);
-   mat dcost_b = mat_alloc(1, 1);
+   mat sig_deriv_out = mat_alloc(4, 1);      // out * (1 - out)
+   mat sig_deriv_hidden = mat_alloc(4, H);   // hidden * (1 - hidden)
+
+   mat dcost = mat_alloc(4, 1);        // error signal at the output layer
+   mat dhidden = mat_alloc(4, H);      // error signal at the hidden layer
+
+   mat xt = transpose(x);              // constant, computed once: [2,4]
+   mat ht = mat_alloc(H, 4);           // hidden.T, recomputed every epoch (hidden changes)
+   mat w2t = mat_alloc(1, H);          // w2.T, recomputed every epoch (w2 changes)
+
+   mat dcost_w1 = mat_alloc(2, H);
+   mat dcost_b1 = mat_alloc(1, H);
+   mat dcost_w2 = mat_alloc(H, 1);
+   mat dcost_b2 = mat_alloc(1, 1);
 
    for (int epoch = 0 ; epoch < epochs ; ++epoch) {
       // forward
-      mat_mult(a1, x, w); // a1 = xw
-      mat_add_broadcast(a1, b); // a1 = xw + b
-      sigmoid(a1); // a1 = sig(a1)
+      mat_mult(hidden, x, w1);      // hidden = x @ w1
+      mat_add_broadcast(hidden, b1);
+      sigmoid(hidden);
+
+      mat_mult(pred, hidden, w2);    // out = hidden @ w2
+      mat_add_broadcast(pred, b2);
+      sigmoid(pred);
 
       // cost
       mat_copy(cost, y);
