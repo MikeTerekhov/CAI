@@ -350,11 +350,32 @@ int main() {
       MAT_AT(dcost_b2, 0, 0) = mat_sum(dcost) * 0.5;
 
       // update weights and bias
-      mat_mult_scalar(dcost_w, learning_rate);
-      mat_diff(w, dcost_w);
+      mat_transpose_into(w2t, w2);        // w2t = w2.T   [1,H]
+      mat_mult(dhidden, dcost, w2t);      // dcost[4,1] @ w2t[1,H] -> dhidden[4,H]
 
-      mat_mult_scalar(dcost_b, learning_rate);
-      mat_diff(b, dcost_b);
+      mat_copy(sig_deriv_hidden, hidden);
+      sig_grad(sig_deriv_hidden);         // hidden * (1 - hidden)
+
+      mat_mult_elem(dhidden, dhidden, sig_deriv_hidden); // dhidden = (propagated error) * hidden'(z1)
+
+      mat_mult(dcost_w1, xt, dhidden);    // x.T[2,4] @ dhidden[4,H] -> [2,H]
+      mat_mult_scalar(dcost_w1, 0.5);
+
+      mat_col_sum(dcost_b1, dhidden);     // sum each hidden unit's error across all 4 examples -> [1,H]
+      mat_mult_scalar(dcost_b1, 0.5);
+
+      // apply the updates for w1, b1, w2, b2
+      mat_mult_scalar(dcost_w1, learning_rate);
+      mat_diff(w1, dcost_w1);
+
+      mat_mult_scalar(dcost_b1, learning_rate);
+      mat_diff(b1, dcost_b1);
+
+      mat_mult_scalar(dcost_w2, learning_rate);
+      mat_diff(w2, dcost_w2);
+
+      mat_mult_scalar(dcost_b2, learning_rate);
+      mat_diff(b2, dcost_b2);
 
       if (epoch % 10000 == 0) {
          float total_cost = 0;
@@ -364,23 +385,33 @@ int main() {
    }
 
    printf("\nfinal:\n");
-   MAT_PRINT(w);
-   MAT_PRINT(b);
-   MAT_PRINT(a1); // predictions, compare against y
+   MAT_PRINT(w1);
+   MAT_PRINT(b1);
+   MAT_PRINT(w2);
+   MAT_PRINT(b2);
+   MAT_PRINT(pred); // predictions, compare against y
 
    printf("\ndecision boundary (x1 -->, x2 ^):\n");
-   print_decision_boundary(w, b, 21);
+   print_decision_boundary(w1, b1, w2, b2, 21); 
 
-
-   mat_free(a1);
+   mat_free(hidden);
+   mat_free(pred);
    mat_free(cost);
-   mat_free(sig_deriv);
+   mat_free(sig_deriv_out);
+   mat_free(sig_deriv_hidden);
    mat_free(dcost);
+   mat_free(dhidden);
    mat_free(xt);
-   mat_free(dcost_w);
-   mat_free(dcost_b);
-   mat_free(w);
-   mat_free(b);
+   mat_free(ht);
+   mat_free(w2t);
+   mat_free(dcost_w1);
+   mat_free(dcost_b1);
+   mat_free(dcost_w2);
+   mat_free(dcost_b2);
+   mat_free(w1);
+   mat_free(b1);
+   mat_free(w2);
+   mat_free(b2);
 
    return 0;
 }
