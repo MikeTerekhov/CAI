@@ -328,28 +328,26 @@ int main() {
       mat_add_broadcast(pred, b2);
       sigmoid(pred);
 
+      //
       // cost
       mat_copy(cost, y);
-      mat_diff(cost, a1); // y - a1
-      mat_sq(cost); // (y - a1)**2
-      mat_mult_scalar(cost, 0.25); // (1 / n) (y - a1)**2
+      mat_diff(cost, pred); // y - pred
+      mat_sq(cost);
+      mat_mult_scalar(cost, 0.25);
 
-      // d cost WITH RESPECT TO W : 1/n * 2 * x.T * ((a1 - y) * sig'(z))
-      // where a1 = sig(z), z = xw + b, sig'(z) = a1 * (1 - a1)
-      mat_copy(sig_deriv, a1);
-      sig_grad(sig_deriv); // sig_deriv = a1 * (1 - a1)
+      // d cost w.r.t. output layer (w2, b2)
+      mat_copy(sig_deriv_out, pred);
+      sig_grad(sig_deriv_out); // pred * (1 - pred)
 
-      mat_copy(dcost, a1); // dcost = a1
-      mat_diff(dcost, y); // dcost = a1 - y
-      mat_mult_elem(dcost, dcost, sig_deriv); // dcost = (a1 - y) * a1 * (1 - a1)
+      mat_copy(dcost, pred);
+      mat_diff(dcost, y); // dcost = pred - y
+      mat_mult_elem(dcost, dcost, sig_deriv_out); // dcost = (pred - y) * pred * (1 - pred)
 
-      mat_mult(dcost_w, xt, dcost); // x.T * dcost -> [2 1]
-      mat_mult_scalar(dcost_w, 0.5); // * 1/n * 2
+      mat_transpose_into(ht, hidden); // ht = hidden.T  [H,4]
+      mat_mult(dcost_w2, ht, dcost);  // hidden.T * dcost -> [H,1]
+      mat_mult_scalar(dcost_w2, 0.5);
 
-      // d cost WITH RESPECT TO B : 1/n * 2 * (a1 - y) * sig'(z)
-      // dz/db = 1 (b is added elementwise to z), so no x.T needed here
-
-      MAT_AT(dcost_b, 0, 0) = mat_sum(dcost) * 0.5;
+      MAT_AT(dcost_b2, 0, 0) = mat_sum(dcost) * 0.5;
 
       // update weights and bias
       mat_mult_scalar(dcost_w, learning_rate);
